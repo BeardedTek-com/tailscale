@@ -23,11 +23,14 @@ if [ "${TAILSCALE_ENABLE:-true}" ]; then
 
     # Bring up tailscale
     tailscale up --authkey="${TAILSCALE_AUTHKEY}" \
-            --advertise-routes ${TAILSCALE_ADVERTISE_ROUTE} \
-            --hostname ${TAILSCALE_HOSTNAME:-nefarious} \
-            --advertise-tags=${TAILSCALE_TAGS} \
-            --accept-routes \
-            --accept-dns
+                    --advertise-routes ${TAILSCALE_ADVERTISE_ROUTE} \
+                    --hostname ${TAILSCALE_HOSTNAME:-nefarious} \
+                    --advertise-tags=${TAILSCALE_TAGS} \
+                    --accept-routes \
+                    --exit-node=${TAILSCALE_EXIT_NODE} \
+                    --accept-dns \
+                    --reset
+
     # Run a loop to make sure it doesn't exit out.  Will expand here more eventually
     TS=0
     while [ $TS == 0 ]; do
