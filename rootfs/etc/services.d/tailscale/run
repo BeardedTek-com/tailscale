@@ -1,6 +1,5 @@
 #!/usr/bin/with-contenv bash
-echo "$TAILSCALE_ENABLE"
-if [ "${TAILSCALE_ENABLE}" ]; then
+if [ "${TAILSCALE_ENABLE:-true}" ]; then
     # Get local docker network to forward so all containers are accessible via tailscale
 
     if [ ! $TAILSCALE_ADVERTISE_ROUTE ]; then
