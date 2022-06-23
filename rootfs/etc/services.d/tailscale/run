@@ -1,0 +1,37 @@
+#!/usr/bin/with-contenv bash
+echo "$TAILSCALE_ENABLE"
+if [ "${TAILSCALE_ENABLE}" ]; then
+    # Get local docker network to forward so all containers are accessible via tailscale
+
+    if [ ! $TAILSCALE_ADVERTISE_ROUTE ]; then
+        TAILSCALE_ADVERTISE_ROUTE=$(getnetwork)
+    fi
+    # Enable IP forwarding
+    rm -f /etc/sysctl.conf
+    touch /etc/sysctl.conf
+    echo 'net.ipv4.ip_forward = 1' | tee -a /etc/sysctl.conf 2> /dev/null
+    echo 'net.ipv6.conf.all.forwarding = 1' | tee -a /etc/sysctl.conf 2> /dev/null
+    sysctl -p /etc/sysctl.conf
+    
+     #Start tailscaled
+    tailscaled &
+
+    # Wait until tailscaled is up...
+    OK=1
+    while [ $OK != 0 ]; do
+        if ps | grep tailscaled | > /tmp/test.txt; then OK=0; else OK=1; fi
+    done
+
+    # Bring up tailscale
+    tailscale up --authkey="${TAILSCALE_AUTHKEY}" \
+            --advertise-routes ${TAILSCALE_ADVERTISE_ROUTE} \
+            --hostname ${TAILSCALE_HOSTNAME:-nefarious} \
+            --advertise-tags=${TAILSCALE_TAGS} \
+            --accept-routes \
+            --accept-dns
+    # Run a loop to make sure it doesn't exit out.  Will expand here more eventually
+    TS=0
+    while [ $TS == 0 ]; do
+        sleep 5000
+    done
+fi

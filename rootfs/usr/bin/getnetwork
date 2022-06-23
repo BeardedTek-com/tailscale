@@ -1,0 +1,7 @@
+#!/venv/bin/python
+import netifaces as ni
+cidr=sum([str(bin(int(octet))).count("1") for octet in ni.ifaddresses('eth0')[ni.AF_INET][0]["netmask"].split(".")])
+addr=ni.ifaddresses('eth0')[ni.AF_INET][0]["addr"].split(".")
+addr[3] = "0"
+addr = ".".join(addr)
+print(f"{addr}/{cidr}")
