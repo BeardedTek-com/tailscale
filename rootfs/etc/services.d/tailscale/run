@@ -23,8 +23,8 @@ if [ "${TAILSCALE_ENABLE:-true}" ]; then
 
     # Bring up tailscale
     tailscale up --authkey="${TAILSCALE_AUTHKEY}" \
-                    --advertise-routes ${TAILSCALE_ADVERTISE_ROUTE} \
-                    --hostname ${TAILSCALE_HOSTNAME:-nefarious} \
+                    --advertise-routes=${TAILSCALE_ADVERTISE_ROUTE} \
+                    --hostname=${TAILSCALE_HOSTNAME:-nefarious} \
                     --advertise-tags=${TAILSCALE_TAGS} \
                     --accept-routes \
                     --exit-node=${TAILSCALE_EXIT_NODE} \
